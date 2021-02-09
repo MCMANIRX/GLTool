@@ -290,15 +290,86 @@ public static void decRGB5A3(byte[] buf, int w, int h, String path, String paren
 
 }
 			
-	public static void pint(int txt) {
-		
-		System.out.println(Integer.toHexString(txt));
+
+
+	public static void decRGBA8(byte[] buf, int w, int h, String path, String parent, String name, String hash ) throws IOException {
+
+		o = new File(parent+"\\"+name+"\\"+hash+".png");
+		BufferedImage pn = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+			 
+			int x = 0;
+			int y = 0;
+			int dx = 0;
+			int dy = 0;
+			
+			int dyHack = 0;
+			bi=0;
+			
+		 	while(y<h) {
+
+
+		 		
+		 		writeRGB8Block(x,y,pn);
+		 	 	//System.out.println("X: "+X+" Y: "+Y+" dx: "+dx+" dy: "+dy);
+
+			 	
+		 		x+= 4;
+			    if(x >= w) {
+		            x = 0;
+		            y += 4;
+		        
+		    }
+		 		
+		 		
+		 		
+		 		}
+			
+	        
+			ImageIO.write(pn, "png", o);
+
+		 
+
+
 	}
+	
+	private static void writeRGB8Block( int x, int y, BufferedImage pn) throws IOException {
+		 
+		 int[] AR = new int[16];
+		 int[] GB = new int[16];
+		 int[] colors = new int[16];
+		 int ind = 0;
+		 
+		 for(int c = 0; c <16; ++c) 
+			AR[c] = (((buf[bi++]&0xFF) <<8) | (buf[bi++]&0xFF))&0xFFFF;
+		 
+		 for(int c = 0; c <16; ++c) 
+			GB[c] = (((buf[bi++]&0xFF) <<8) | (buf[bi++]&0xFF))&0xFFFF;
+		 
+		 for(int c = 0; c <16; ++c) {
+			colors[c] = (AR[c]<<16) | GB[c]&0xFFFF;
+		 
+		// pint(colors[c]);
+		
+		 }
+
+		 
+		 
+		 for(int dy = 0; dy < 4; dy++) {
+	         for(int dx = 0; dx < 4; dx++) {
+
+	                pn.setRGB(x + dx, y + dy, colors[ind++]);
+	         }
+	         }
+	     }
+	 			
+				
 
 		
 		
+	public static void pint(int txt) {
 		
-		
+		System.out.println(Integer.toHexString(txt));
+	}	
 		
 	}//end class
  			

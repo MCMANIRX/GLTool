@@ -148,9 +148,13 @@ public class encTest {
 			    buf.addAll(encCmpr(ww,hh));
 				break;
 			
+			case 0x8:
+			    buf.addAll(encRGB8(ww,hh));
+				break;
+				
 			default:
-				p("invalid encoding type. exiting");
-				System.exit(0);
+				p("\""+et+"\" is an unknown encoding type. defaulting to CMPR");
+				buf.addAll(encCmpr(ww,hh));
 				break;
 			
 			}
@@ -380,6 +384,60 @@ public static ArrayList<Byte> enc5a3 (int w, int h) throws IOException {
 					img.add( (byte) ((pix >> 8-(k*8)) &0xFF) );
 			 }
 
+	 	//System.out.println("X: "+X+" Y: "+Y+" dx: "+dx+" dy: "+dy);
+
+		 	
+	 		x+= 4;
+		    if(x >= w) {
+	            x = 0;
+	            y += 4;
+	        
+	    }
+	 		
+	 		
+	 		
+	 		
+
+	 
+	 
+}
+		
+		return img;
+		
+
+}
+
+public static ArrayList<Byte> encRGB8 (int w, int h) throws IOException {
+	
+	ArrayList<Byte> img = new ArrayList<Byte>();
+	
+	 
+	 int y = 0;
+	 int x =0;
+
+	
+	 
+	 
+		while(y<h) {
+
+			
+			 
+
+			 int[] texel = new int[16];	
+			 
+			  mip.getRGB(x, y, 4, 4, texel, 0, 4);
+
+			 
+			 for(int i = 0; i < texel.length ; ++i) {
+				// pint(texel[i]);
+				 img.add( (byte) ((texel[i]>>24)&0xFF)); 
+				 img.add( (byte) ((texel[i]>>16)&0xFF)); 
+			 }//AR
+			 
+			 for(int i = 0; i < texel.length ; ++i) {
+				 img.add( (byte) ((texel[i]>>8)&0xFF)); 
+				 img.add( (byte) ((texel[i])&0xFF));
+			 }//GB
 	 	//System.out.println("X: "+X+" Y: "+Y+" dx: "+dx+" dy: "+dy);
 
 		 	

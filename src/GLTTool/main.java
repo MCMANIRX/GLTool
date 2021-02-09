@@ -222,6 +222,15 @@ public class main {
 				case 0x5:
 					deck.decRGB5A3( buf , w,h, iFPath.getAbsolutePath(),iFPath.getAbsolutePath(),fname,internalId[i]);
 					break;
+					
+				case 0x8:
+					deck.decRGBA8( buf , w,h, iFPath.getAbsolutePath(),iFPath.getAbsolutePath(),fname,internalId[i]);
+					break;
+				
+				default:
+					p("\""+encTypes[i]+"\" is not a known encoding format. defaulting to CMPR.");
+					deck.decCMPR( buf , w,h, iFPath.getAbsolutePath(),iFPath.getAbsolutePath(),fname,internalId[i]);
+					break;
 				
 				}
 
