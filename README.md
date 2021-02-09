@@ -3,10 +3,11 @@
 For decoding and encoding Super Mario Strikers GLT files.
 
 After extracting, use the [filename]_enc.txt to choose how to encode textures for repacking.\
-currently supported encoding/decoing types:
+currently supported encoding/decoding types:
 
 CMPR\
-RGB5A3
+RGB5A3\
+RGBA32
 
 
 requires Java
