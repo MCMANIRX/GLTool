@@ -142,6 +142,8 @@ public class TexDec {
 		
 		c0 = toA888(c0); //scale RGB565 colors to ARGB88
 		c1 = toA888(c1);
+		c2 = toA888(c2);
+		c3 = toA888(c3);
 		
 		int[] colors = new int[4];
 		
@@ -185,19 +187,20 @@ private static void writeBlock(int[] block, int[] c,int x, int y, BufferedImage 
 	
 }
 
-//calculate c2 and c3
-private static int mixColors(int c0, int c1, int mul1, int mul2, int div) {
-    int r0 = cc58[ c0 >> 11 ];
-    int g0 = cc68[ c0 >>  5 & 0x3f ];
-    int b0 = cc58[ c0       & 0x1f ]; 
-    int r1 = cc58[ c1 >> 11 ];
-    int g1 = cc68[ c1 >>  5 & 0x3f ];
-    int b1 = cc58[ c1       & 0x1f ]; 
-
-    int r = (r0 * mul1 + r1 * mul2) / div;
-    int g = (g0 * mul1 + g1 * mul2) / div;
-    int b = (b0 * mul1 + b1 * mul2) / div;
-    return 0xFF << 24 | (Math.round(r) << 16) | (Math.round(g) << 8) | (Math.round(b));
+/*Convert c0 and c1 to RGB888, calculate c2 and c3, convert back to RGB565.
+ * src: https://github.com/notezway/DXT1Decoder/blob/master/src/net/dds/DXT1Decoder.java
+ */
+private static int mixColors(int color0, int color1, int mul1, int mul2, int div) { 
+    float r0 = (color0 >>> 11) & 31;
+    float g0 = (color0 >>> 5) & 63;
+    float b0 = color0 & 31;
+    float r1 = (color1 >>> 11) & 31;
+    float g1 = (color1 >>> 5) & 63;
+    float b1 = color1 & 31;
+    float r = (r0 * mul1 + r1 * mul2) / div;
+    float g = (g0 * mul1 + g1 * mul2) / div;
+    float b = (b0 * mul1 + b1 * mul2) / div;
+    return (Math.round(r) << 11) | (Math.round(g) << 5) | (Math.round(b));
 }
 	
 

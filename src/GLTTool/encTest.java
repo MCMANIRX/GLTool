@@ -324,7 +324,7 @@ private static int to565(int[] te) {
 		
 		
 		
-		if( ((te[i]>>24) &0xFF) !=0xFF ) //if not fully opaque,  considered transparent
+		if( ((te[i]>>24) &0xFF) <=0x80 ) //if not mildly opaque,  considered transparent
 			alpha = true;
 		
 		
