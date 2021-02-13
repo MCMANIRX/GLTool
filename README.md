@@ -16,7 +16,7 @@ requires Java
 
 
 to extract:  glttool.jar dec input.glt\
-to repack:   glttool.jar enc input.glt (output.glt will be written to folder generated after extracting\
+to repack:   glttool.jar enc input.glt (output.glt will be written to folder generated after extracting
 
 to export images as .tex0 instead of .png, add the suffix "tex0" after "input.glt" in the extract command
 
