@@ -51,27 +51,39 @@ public class main {
 	public static byte[] encTypes;
 	public static boolean isOld;
 	public static boolean isRLT;
+	public static boolean toTex0;
 	
 	
 	public static void main(String[] args) throws Exception {
 		//UIManager.setLookAndFeel("com.jtattoo.plaf.smart.SmartLookAndFeel"); causes error?
+		toTex0 = false;
+
 	
 		File inputFile;
+		String fname;
 		
 		//cli or gui+cli
 		
 		if(args.length ==0) {
 			
+			try {
 			new filefind();
-			
+			} catch (IndexOutOfBoundsException e) {
+				new filefind();
+			}
 	
 			
-			
+			fname = filefind.name;
 			
 			inputFile  = filefind.selectedfile;
+
+			
+		//	inputFile = new File("C:\\Users\\mcser\\Documents\\games\\Dolphin\\sluggers\\toad_mario.glt");
+		//	iFPath = new File("C:\\Users\\mcser\\Documents\\games\\Dolphin\\sluggers").getAbsoluteFile();
 			iFPath = filefind.selecteddir;
 			
 			read = new RandomAccessFile(inputFile, "rw");
+
 			
 			Scanner s = new Scanner(System.in);
 			isOld = false;
@@ -80,10 +92,10 @@ public class main {
 			switch(s.nextLine()) {
 			
 			case "2":
-				decode(filefind.selectedfile,filefind.name);
+				decode(inputFile,fname);
 				break;
 			case "1":
-				encode(filefind.selectedfile, filefind.name);
+				encode(inputFile, fname);
 				break;
 			default:
 				System.exit(0);
@@ -99,6 +111,13 @@ public class main {
 			read = new RandomAccessFile(inputFile, "rw");
 			iFPath = new File(inputFile.getParent());
 			System.out.println(iFPath);
+			
+			
+			
+			if(args.length == 3 && args[2].equals("tex0"))
+				 toTex0 = true;
+				
+				
 			
 			switch(args[0]) {
 			
@@ -125,8 +144,12 @@ public class main {
 
 			out_dir = new File(iFPath.getAbsolutePath()+"\\"+fname);
 			enctxt = new File(out_dir+"\\"+fname+"_enc.txt");
+			
 
-			;
+			
+			if(toTex0)
+				p("Decode to TEX0 enabled");
+
 			
 			read.seek(0x0);
 			
@@ -157,9 +180,7 @@ public class main {
 					 buf = new byte[texSzTbl[i]+oldOff[i]];
 					pos = offTbl[i]+(texCnt*0x10)+0x10;
 				}
-				
-				//pint(pos);
-				//pint(buf.length);
+				//pint(read.getFilePointer());
 				
 
 		/*		
@@ -172,6 +193,14 @@ public class main {
 				
 				int w = getDims(pos+0x9)[0];
 				int h = getDims(pos+0x9)[1];
+				
+				int lod = 0;
+				
+				if(toTex0) {
+				
+					lod = encTest.cntMips(h, w);
+				};
+
 				
 				
 				int index = 0;
@@ -208,33 +237,45 @@ public class main {
 			
 				pos += texSzTbl[i];
 				
+				
+				//	pint(lod);
+				
+				if(toTex0) 
+					tex0Gen(w,h,lod,texSzTbl[i],encTypes[i],internalId[i],iFPath.getAbsolutePath(),fname,buf);
+				
+						else {
+
+				
+			//	pint(encTypes[i]);
 							
 				TexDec deck = new TexDec(buf);
 				
-				pint(encTypes[i]);
+				
 				
 				switch(encTypes[i]) {
 				
 				case 0x6:
-					deck.decCMPR( buf , w,h, iFPath.getAbsolutePath(),iFPath.getAbsolutePath(),fname,internalId[i]);
+					deck.decCMPR( w,h, iFPath.getAbsolutePath(),fname,internalId[i]);
 					break;
 				
 				case 0x5:
-					deck.decRGB5A3( buf , w,h, iFPath.getAbsolutePath(),iFPath.getAbsolutePath(),fname,internalId[i]);
+					deck.decRGB5A3(w,h, iFPath.getAbsolutePath(),fname,internalId[i]);
 					break;
 					
 				case 0x8:
-					deck.decRGBA8( buf , w,h, iFPath.getAbsolutePath(),iFPath.getAbsolutePath(),fname,internalId[i]);
+					deck.decRGBA8( w,h, iFPath.getAbsolutePath(),fname,internalId[i]);
 					break;
 				
 				default:
 					p("\""+encTypes[i]+"\" is not a known encoding format. defaulting to CMPR.");
-					deck.decCMPR( buf , w,h, iFPath.getAbsolutePath(),iFPath.getAbsolutePath(),fname,internalId[i]);
+					deck.decCMPR( w,h, iFPath.getAbsolutePath(),fname,internalId[i]);
 					break;
 				
 				}
-
 				
+			
+
+						}
 				//p("C:\\Program Files\\Wiimm\\SZS\\wimgt.exe DECODE "+temp.getAbsolutePath()+" --dest "+temp.getParent()+"\\"+fname+"\\"+internalId[i]+".png");
 			//	Process pr = rt.exec("C:\\Program Files\\Wiimm\\SZS\\wimgt.exe DECODE "+temp.getAbsolutePath()+" --dest "+temp.getParent()+"\\"+fname+"\\"+internalId[i]+".png");
 				p("wrote file "+i);
@@ -258,6 +299,9 @@ public class main {
 			
 	}
 		
+
+
+
 		public static void encode(File dir, String fname) throws IOException, InterruptedException {
 				
 			
@@ -665,6 +709,34 @@ public class main {
 		
 	}
 	
+	public static void tex0Gen(int w, int h, int lod, int size, int enct, String hash, String path, String name, byte[] bufr) throws IOException {
+		
+		File o = new File(path+"\\"+name+"\\"+hash+".tex0");
+		o.delete();
+		RandomAccessFile tex0 = new RandomAccessFile(o,"rw");
+		
+		//tex0.seek(0x0);
+		
+		int[] header = {0x54455830, size+0x40, lod, 0x0, 
+				
+						0x40, size+0x4+0x40,0x0, (w<<16)|h&0xFFFF,
+						
+						gltTex0(enct),lod,0x0,0x40<<24,
+							
+						0x0,0x0,0x0,0x0};
+		
+		for(int i: header)
+			tex0.writeInt(i);
+		
+		tex0.write(bufr);
+		tex0.writeInt(0x0);
+		tex0.writeBytes(hash);
+		
+		tex0.close();
+		
+		
+	}
+	
 	public static String encToS(int e) {
 		
 		switch(e) {
@@ -701,6 +773,51 @@ public class main {
 		
 	}
 	
+	public static int gltTex0(int enct) {
+		
+		switch(enct) {
+	
+	
+	case 0x2:
+		return 0x0;
+
+		
+	case 0x3:
+		return 0x1;
+
+		
+	case 0x4:
+		return 0x2;
+	
+		
+	case 0x5:
+		return 0x5;
+	
+	
+	case 0x6:
+		return 0xe;
+		
+		
+	case 0x7:
+		return 0x4;
+		
+		
+	case 0x8:
+		return 0x6;
+		}
+		return -1;
+	}
+	
+	/*            { 0x8, Decode_Gamecube.TextureFormats.RGBA32 },
+{ 0x7, Decode_Gamecube.TextureFormats.RGB565 },
+{ 0x6, Decode_Gamecube.TextureFormats.CMPR },
+{ 0x5, Decode_Gamecube.TextureFormats.RGB5A3 },
+{ 0x4, Decode_Gamecube.TextureFormats.IA4 },
+{ 0x3, Decode_Gamecube.TextureFormats.I8 },
+{ 0x2, Decode_Gamecube.TextureFormats.I4 },*/
+	
+	
+	
 	
 	
 	public static void p(String txt) {
@@ -712,6 +829,11 @@ public static void pint(int txt) {
 		
 		System.out.println(Integer.toHexString(txt));
 	}
+
+private static void pint(long txt) {
+	System.out.println(Long.toHexString(txt));
+	
+}
 	
 	
 

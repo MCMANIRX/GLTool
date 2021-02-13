@@ -570,14 +570,14 @@ public static int a888toRGB(int c, boolean alpha) {
 		
 		int temp = h;
 		
-		while(temp>4) {
+		while(temp>16) {
 			temp = temp/2;
 			++hl;				
 		}
 		
 		temp = w;
 		
-		while(temp>4) {
+		while(temp>16) {
 			temp = temp/2;
 			++wl;				
 		}

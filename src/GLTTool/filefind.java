@@ -42,8 +42,8 @@ public class filefind{
 		
 
 				//change this path if you want to use the gui+cli mode
-			fc.setCurrentDirectory(new File("C:\\Users\\mcser\\Documents\\games\\Dolphin\\soccer-gecko\\GRAPHICS_TOOLS\\mahyo\\Mario"));
-		
+			fc.setCurrentDirectory(new File("C:\\Users\\mcser\\Documents\\games\\Dolphin\\sluggers"));
+	
 		
 		frame.setVisible(true);
 	

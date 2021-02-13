@@ -41,11 +41,12 @@ public class TexDec {
 		    0xc2,0xc6,0xca,0xce, 0xd2,0xd7,0xdb,0xdf, 0xe3,0xe7,0xeb,0xef, 0xf3,0xf7,0xfb,0xff
 		};
 	
-	public TexDec(byte[] buf){
-		
+	
+	public TexDec(byte[] buf) {
 		this.buf = buf;
-
+		
 	}
+
 	
 	/*CMPR employs a similar codec to DXT1, but with two differences:
 	 * -CMPR is big-endian
@@ -62,9 +63,9 @@ public class TexDec {
 	//http://wiki.tockdom.com/wiki/Image_Formats#CMPR
 	//https://en.wikipedia.org/wiki/S3_Texture_Compression#DXT1
 	
-	public static void decCMPR(byte[] buf, int w, int h, String path, String parent, String name, String hash ) throws IOException {
+	public static void decCMPR(int w, int h, String path, String name, String hash ) throws IOException {
 		
-		o = new File(parent+"\\"+name+"\\"+hash+".png");
+		o = new File(path+"\\"+name+"\\"+hash+".png");
 		BufferedImage pn = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
  		
 		bi = 0; //buffer index variable
@@ -253,9 +254,9 @@ public static int ARGBto888(int color, boolean alpha) {
 //https://github.com/marco-calautti/Rainbow/wiki/RGB5A3
 //http://wiki.tockdom.com/wiki/Image_Formats#RGB5A3
 	
-public static void decRGB5A3(byte[] buf, int w, int h, String path, String parent, String name, String hash ) throws IOException {
+public static void decRGB5A3(int w, int h, String path, String name, String hash ) throws IOException {
 
-	o = new File(parent+"\\"+name+"\\"+hash+".png");
+	o = new File(path+"\\"+name+"\\"+hash+".png");
 	BufferedImage pn = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
 		 
 		int x = 0;
@@ -295,9 +296,9 @@ public static void decRGB5A3(byte[] buf, int w, int h, String path, String paren
 			
 
 
-	public static void decRGBA8(byte[] buf, int w, int h, String path, String parent, String name, String hash ) throws IOException {
+	public static void decRGBA8(int w, int h, String path,String name, String hash ) throws IOException {
 
-		o = new File(parent+"\\"+name+"\\"+hash+".png");
+		o = new File(path+"\\"+name+"\\"+hash+".png");
 		BufferedImage pn = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
 			 
 			int x = 0;
