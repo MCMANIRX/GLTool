@@ -63,7 +63,7 @@ public class TexDec {
 	//http://wiki.tockdom.com/wiki/Image_Formats#CMPR
 	//https://en.wikipedia.org/wiki/S3_Texture_Compression#DXT1
 	
-	public static void decCMPR(int w, int h, String path, String name, String hash ) throws IOException {
+	public void decCMPR(int w, int h, String path, String name, String hash ) throws IOException {
 		
 		o = new File(path+"\\"+name+"\\"+hash+".png");
 		BufferedImage pn = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
@@ -121,7 +121,7 @@ public class TexDec {
  }
 	
 
- public static void rwblock(int X, int Y, BufferedImage pn) throws IOException {
+ public  void rwblock(int X, int Y, BufferedImage pn) throws IOException {
 	 
 	 	int c0 = ((buf[bi++] & 0xff) <<8) | (buf[bi++] & 0xff);
 		int c1 = ((buf[bi++] & 0xff) <<8) | (buf[bi++] & 0xff);
@@ -254,7 +254,7 @@ public static int ARGBto888(int color, boolean alpha) {
 //https://github.com/marco-calautti/Rainbow/wiki/RGB5A3
 //http://wiki.tockdom.com/wiki/Image_Formats#RGB5A3
 	
-public static void decRGB5A3(int w, int h, String path, String name, String hash ) throws IOException {
+public  void decRGB5A3(int w, int h, String path, String name, String hash ) throws IOException {
 
 	o = new File(path+"\\"+name+"\\"+hash+".png");
 	BufferedImage pn = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
@@ -296,7 +296,7 @@ public static void decRGB5A3(int w, int h, String path, String name, String hash
 			
 
 
-	public static void decRGBA8(int w, int h, String path,String name, String hash ) throws IOException {
+	public  void decRGBA8(int w, int h, String path,String name, String hash ) throws IOException {
 
 		o = new File(path+"\\"+name+"\\"+hash+".png");
 		BufferedImage pn = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
