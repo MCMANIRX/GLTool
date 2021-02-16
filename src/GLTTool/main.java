@@ -145,7 +145,6 @@ public class main {
 			out_dir = new File(iFPath.getAbsolutePath()+"\\"+fname);
 			enctxt = new File(out_dir+"\\"+fname+"_enc.txt");
 			
-
 			
 			if(toTex0)
 				p("Decode to TEX0 enabled");
@@ -211,9 +210,11 @@ public class main {
 					
 					read.seek(read.getFilePointer()+oldOff[i]);
 					
-					while(read.getFilePointer() < ( (texSzTbl[i]-(0x20) + pos+0x10-oldOff[i] ))) 
+					//while(read.getFilePointer() < ( (texSzTbl[i]-(0x20) + pos+0x10-oldOff[i] ))) 
 																	
-						buf[index++]=read.readByte();
+					//	buf[index++]=read.readByte();
+					
+					read.read(buf);
 					
 				//p(Long.toHexString(read.getFilePointer()));
 					
@@ -221,14 +222,14 @@ public class main {
 				}else {
 				//	pint((texSzTbl[i]-0x20) + pos);
 					read.seek(read.getFilePointer()+0xE);
-
-
 					
-					while(read.getFilePointer() < ( (texSzTbl[i]) + pos ) ) {
-						buf[index++]=read.readByte();
+					read.read(buf);
+				//	buf, texSzTbl[i] + pos, index
+					//while(read.getFilePointer() < (  ) ) 
 						
 						
-					}
+						
+					
 						
 					}
 				

@@ -149,7 +149,7 @@ public class encTest {
 				break;
 			
 			case 0x8:
-			    buf.addAll(encRGB8(ww,hh));
+			    buf.addAll(encRgb8(ww,hh));
 				break;
 				
 			default:
@@ -221,8 +221,7 @@ public class encTest {
 	 		
 	 		//append each byte of the 8-byte texel to the ArrayList one at a time
 	 		for(int k = 0 ; k < 8; ++k)
-	 		img.add(
-	 					(byte) (( (CMPRTexel>>56-(8*k)) )&0xFF  )) ;
+	 			img.add((byte) (( (CMPRTexel>>56-(8*k)) )&0xFF  )) ;
 	 		
 	 		
 	 		
@@ -381,7 +380,7 @@ public static ArrayList<Byte> enc5a3 (int w, int h) throws IOException {
 			 for(int i = 0; i < texel.length; ++i) {
 					int pix = ( (texel[i] >> 24) & 0xFF) == 0xFF ? a888toRGB(texel[i], false) : a888toRGB(texel[i], true);
 				for(int k = 0; k < 2 ; ++k) 
-					img.add( (byte) ((pix >> 8-(k*8)) &0xFF) );
+					img.add( (byte) ((pix >> (8-(k*8))) &0xFF) );
 			 }
 
 	 	//System.out.println("X: "+X+" Y: "+Y+" dx: "+dx+" dy: "+dy);
@@ -407,13 +406,13 @@ public static ArrayList<Byte> enc5a3 (int w, int h) throws IOException {
 
 }
 
-public static ArrayList<Byte> encRGB8 (int w, int h) throws IOException {
+public static ArrayList<Byte> encRgb8 (int w, int h) throws IOException {
 	
 	ArrayList<Byte> img = new ArrayList<Byte>();
 	
 	 
 	 int y = 0;
-	 int x =0;
+	 int x = 0;
 
 	
 	 
@@ -438,7 +437,6 @@ public static ArrayList<Byte> encRGB8 (int w, int h) throws IOException {
 				 img.add( (byte) ((texel[i]>>8)&0xFF)); 
 				 img.add( (byte) ((texel[i])&0xFF));
 			 }//GB
-	 	//System.out.println("X: "+X+" Y: "+Y+" dx: "+dx+" dy: "+dy);
 
 		 	
 	 		x+= 4;
@@ -570,14 +568,14 @@ public static int a888toRGB(int c, boolean alpha) {
 		
 		int temp = h;
 		
-		while(temp>16) {
+		while(temp>=16) {
 			temp = temp/2;
 			++hl;				
 		}
 		
 		temp = w;
 		
-		while(temp>16) {
+		while(temp>=16) {
 			temp = temp/2;
 			++wl;				
 		}
