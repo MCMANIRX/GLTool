@@ -122,6 +122,8 @@ public class encTest {
 	 		//calculate amount of mipmaps to generate
 
 	 		 lod = cntMips(h,w,lim);
+	 		 
+	 		 
 	 		
 	 		main.p("encoding tex "+main.index+" ("+lod+" generated mipmaps)");
 	 			 		

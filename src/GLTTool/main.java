@@ -434,7 +434,7 @@ public class main {
 				
 				int pos1 = 0x10;
 				if(!isRLT)
-					pos+=0x10;
+					pos1+=0x10;
 				
 				pos = offTbl[i]+(texCnt*0x10)+pos1;
 				
