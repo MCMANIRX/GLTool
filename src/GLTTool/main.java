@@ -93,9 +93,11 @@ public class main {
 			
 			case "2":
 				decode(inputFile,fname);
+				s.close();
 				break;
 			case "1":
 				encode(inputFile, fname);
+				s.close();
 				break;
 			default:
 				System.exit(0);
@@ -144,7 +146,7 @@ public class main {
 
 			out_dir = new File(iFPath.getAbsolutePath()+"\\"+fname);
 			enctxt = new File(out_dir+"\\"+fname+"_enc.txt");
-		//	toTex0=true;
+			//toTex0=true;
 			
 			if(toTex0)
 				p("Decode to TEX0 enabled");
@@ -197,12 +199,12 @@ public class main {
 				
 				if(toTex0) {
 				
-					lod = encTest.cntMips(h, w);
+					lod = encTest.cntMips(h, w, getLim());
 				};
 
 				
 				
-				int index = 0;
+			
 				
 				//read image block data into buffer
 				
@@ -309,13 +311,20 @@ public class main {
 			
 			pngdir = new File(dir.getParent()+"\\"+fname);
 			
-			File glt = new File(pngdir.getAbsolutePath()+"\\"+fname+".glt");
+
 			
 			enctxt = new File(pngdir.getAbsolutePath()+"\\"+fname+"_enc.txt");
 
 			 //gets texture count, offsetTable, and textureSizeTable
 
 			getHeader(0);
+			
+			String ext = "glt";
+			
+			if(isRLT)
+				ext = "rlt";
+			
+			File xlt = new File(pngdir.getAbsolutePath()+"\\"+fname+"."+ext);
 			
 			File pngs[] = new File[texCnt];
 			
@@ -355,8 +364,8 @@ public class main {
 			}
 			
 			
-			glt.delete();
-			write = new RandomAccessFile(glt, "rw");
+			xlt.delete();
+			write = new RandomAccessFile(xlt, "rw");
 			
 			//copy header
 			write.seek(0x0);
@@ -376,10 +385,12 @@ public class main {
 				
 			else {
 				
-				while(write.getFilePointer() < 0x10)  //padding
+				while(write.getFilePointer() < 0x10)  //header
 					write.writeInt(read.readInt());
-				while(write.getFilePointer() < 0x20)  //padding
-					write.writeInt(0x0);
+				
+				if(!isRLT) 
+					while(write.getFilePointer() < 0x20)  //padding
+						write.writeInt(0x0);
 			
 			
 			}
@@ -389,7 +400,8 @@ public class main {
 			
 			for(int i = 0; i < texCnt; ++i) {
 				
-				offTbl[i] = 0x10;
+				
+					offTbl[i] = 0x10;
 				
 				index = i;
 				
@@ -400,7 +412,9 @@ public class main {
 				
 				//encode image
 				
-				img = encTest.getTex(pngs[i], encTypes[i]);
+				int lim = getLim();
+						
+				img = encTest.getTex(pngs[i], encTypes[i],lim);
 				
 				
 				
@@ -418,8 +432,11 @@ public class main {
 				
 				
 				
-
-				pos = offTbl[i]+(texCnt*0x10)+0x20;
+				int pos1 = 0x10;
+				if(!isRLT)
+					pos+=0x10;
+				
+				pos = offTbl[i]+(texCnt*0x10)+pos1;
 				
 
 				
@@ -558,6 +575,7 @@ public class main {
 			read.seek(pos);
 			int encpos = 0;
 			
+			enctype.write("rlt");
 			enctype.write(""
 					+ "\n0x8 = RGBA32\n"
 					+ "0x7 = RGB565\n"
@@ -679,6 +697,12 @@ public class main {
 		
 		Scanner encGet = new Scanner(enctxt);
 		
+		if(encGet.next().equals("rlt")) //encode to .rlt
+			isRLT=true;
+		
+		if(isRLT)
+			p("encoding to RLT");
+		
 		while(!(encGet.next().charAt(0) == '#'));
 		
 		for(int i = 0 ; i < texCnt; ++i) {
@@ -698,7 +722,11 @@ public class main {
 	
 	public static void writeHeader() throws NumberFormatException, IOException {
 		
-		write.seek(0x20);
+		int pos = 0x10;
+		if(!isRLT)
+			pos+=0x10;
+		write.seek(pos);
+		
 		for(int i = 0 ; i < texCnt; ++i) {
 			
 			write.writeInt((int)Long.parseLong(internalId[i],16)); //hash
@@ -771,6 +799,15 @@ public class main {
 0x2 = I4
 */
 		
+	}
+	
+	public static int getLim() {
+		int lim = 16;
+			
+			if(isRLT)
+				lim = 4;
+			
+			return lim;
 	}
 	
 	public static int gltTex0(int enct) {

@@ -106,7 +106,7 @@ public class encTest {
 	         0x0e,0x0e,0x0e,0x0e, 0x0e,0x0e,0x0e,0x0f, 0x0f,0x0f,0x0f,0x0f, 0x0f,0x0f,0x0f,0x0f
 	     };
 	 
-	 public static byte[] getTex(File f,byte et) throws IOException  {
+	 public static byte[] getTex(File f,byte et,int lim) throws IOException  {
 		 
 		 
 		 
@@ -120,7 +120,8 @@ public class encTest {
 	 		wh = (w<<16) | h &0xFFFF;
 	 		
 	 		//calculate amount of mipmaps to generate
-	 		 lod = cntMips(h,w);
+
+	 		 lod = cntMips(h,w,lim);
 	 		
 	 		main.p("encoding tex "+main.index+" ("+lod+" generated mipmaps)");
 	 			 		
@@ -384,7 +385,7 @@ public static ArrayList<Byte> enc5a3 (int w, int h) throws IOException {
 						img.add( (byte) ((pix >> (8-(k*8))) &0xFF) );
 			 }
 
-	 	System.out.println("X: "+x+" Y: "+y+" dx: "+dx+" dy: "+dy);
+	 	//System.out.println("X: "+x+" Y: "+y+" dx: "+dx+" dy: "+dy);
 
 		 	
 	 		x+= 4;
@@ -560,7 +561,7 @@ public static int a888toRGB(int c, boolean alpha) {
 	  }
 	
 	//determine limiting dimension to generate max mips
-	public static int cntMips(int h, int w) {
+	public static int cntMips(int h, int w, int lim) {
 		
 		int hl = 0;
 		int wl = 0;
@@ -569,14 +570,14 @@ public static int a888toRGB(int c, boolean alpha) {
 		
 		int temp = h;
 		
-		while(temp>=16) {
+		while(temp>=lim) {
 			temp = temp/2;
 			++hl;				
 		}
 		
 		temp = w;
 		
-		while(temp>=16) {
+		while(temp>=lim) {
 			temp = temp/2;
 			++wl;				
 		}
