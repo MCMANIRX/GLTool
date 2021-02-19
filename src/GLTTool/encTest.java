@@ -379,11 +379,12 @@ public static ArrayList<Byte> enc5a3 (int w, int h) throws IOException {
 			  	//gnerate and add texels to ArratList byte by byte
 			 for(int i = 0; i < texel.length; ++i) {
 					int pix = ( (texel[i] >> 24) & 0xFF) == 0xFF ? a888toRGB(texel[i], false) : a888toRGB(texel[i], true);
-				for(int k = 0; k < 2 ; ++k) 
-					img.add( (byte) ((pix >> (8-(k*8))) &0xFF) );
+			
+					for(int k = 0; k < 2 ; ++k) 
+						img.add( (byte) ((pix >> (8-(k*8))) &0xFF) );
 			 }
 
-	 	//System.out.println("X: "+X+" Y: "+Y+" dx: "+dx+" dy: "+dy);
+	 	System.out.println("X: "+x+" Y: "+y+" dx: "+dx+" dy: "+dy);
 
 		 	
 	 		x+= 4;

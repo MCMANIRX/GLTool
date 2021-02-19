@@ -144,7 +144,7 @@ public class main {
 
 			out_dir = new File(iFPath.getAbsolutePath()+"\\"+fname);
 			enctxt = new File(out_dir+"\\"+fname+"_enc.txt");
-			
+		//	toTex0=true;
 			
 			if(toTex0)
 				p("Decode to TEX0 enabled");
@@ -249,27 +249,26 @@ public class main {
 				
 			//	pint(encTypes[i]);
 							
-				TexDec deck = new TexDec(buf);
-				
+				TexDec.passBuff(buf);
 				
 				
 				switch(encTypes[i]) {
 				
 				case 0x6:
-					deck.decCMPR( w,h, iFPath.getAbsolutePath(),fname,internalId[i]);
+					TexDec.decCMPR(w,h, iFPath.getAbsolutePath(),fname,internalId[i]);
 					break;
 				
 				case 0x5:
-					deck.decRGB5A3(w,h, iFPath.getAbsolutePath(),fname,internalId[i]);
+					TexDec.decRGB5A3(w,h, iFPath.getAbsolutePath(),fname,internalId[i]);
 					break;
 					
 				case 0x8:
-					deck.decRGBA8( w,h, iFPath.getAbsolutePath(),fname,internalId[i]);
+					TexDec.decRGBA8(w,h, iFPath.getAbsolutePath(),fname,internalId[i]);
 					break;
 				
 				default:
 					p("\""+encTypes[i]+"\" is not a known encoding format. defaulting to CMPR.");
-					deck.decCMPR( w,h, iFPath.getAbsolutePath(),fname,internalId[i]);
+					TexDec.decCMPR( w,h, iFPath.getAbsolutePath(),fname,internalId[i]);
 					break;
 				
 				}
