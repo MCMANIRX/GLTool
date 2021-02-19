@@ -57,6 +57,7 @@ public class main {
 	public static void main(String[] args) throws Exception {
 		//UIManager.setLookAndFeel("com.jtattoo.plaf.smart.SmartLookAndFeel"); causes error?
 		toTex0 = false;
+		isRLT = false;
 
 	
 		File inputFile;
@@ -506,11 +507,10 @@ public class main {
 		
 			read.seek(0x4);
 			texCnt = read.readInt();
-			if(read.readInt() !=0)
+			if(read.readInt() !=0) {
 				isRLT=true;
-		
-			
-			
+				pint(read.getFilePointer());
+			}
 			
 			if(mode == 0) {
 				
@@ -574,8 +574,8 @@ public class main {
 			
 			read.seek(pos);
 			int encpos = 0;
-			
-			enctype.write("rlt");
+			if(isRLT)
+				enctype.write("rlt");
 			enctype.write(""
 					+ "\n0x8 = RGBA32\n"
 					+ "0x7 = RGB565\n"
