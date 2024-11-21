@@ -5,13 +5,11 @@ package GLTTool;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
-
 import java.io.RandomAccessFile;
-
+import java.util.ArrayList;
 import java.util.Scanner;
 
 
@@ -155,12 +153,12 @@ public class main {
 			
 			read.seek(0x0);
 			
-			if(read.readInt() != 0x50544C47) {
+			//if(read.readInt() != 0x50544C47) {
 				
-				p("Not a valid .glt file. exiting.");
-				System.exit(-1);
+			//	p("Not a valid .glt file. exiting.");
+			//	System.exit(-1);
 				
-			}
+			//}
 			out_dir.mkdir();
 
 				
@@ -200,7 +198,7 @@ public class main {
 				
 				if(toTex0) {
 				
-					lod = encTest.cntMips(h, w, getLim());
+					lod = TexEnc.cntMips(h, w, getLim());
 				};
 
 				
@@ -308,7 +306,8 @@ public class main {
 		public static void encode(File dir, String fname) throws IOException, InterruptedException {
 				
 			
-		
+			ArrayList<String> reformatInternalIDs = null;
+
 			
 			pngdir = new File(dir.getParent()+"\\"+fname);
 			
@@ -319,6 +318,11 @@ public class main {
 			 //gets texture count, offsetTable, and textureSizeTable
 
 			getHeader(0);
+
+			//gets encoding types 
+			
+			encTypes = getEncs();
+			
 			
 			String ext = "glt";
 			
@@ -334,11 +338,14 @@ public class main {
 		//	p("texCnt is "+texCnt);	
 				
 				//get .pngs
-			
 		 pngs = pngdir.listFiles(new FilenameFilter() {
 			    public boolean accept(File dir, String name) {
 			    	for(String fn : internalId) {
+						boolean f = false;
 			    		if(name.equals((fn)+".png")) {
+							//System.out.println(fn);
+							
+
 			    			return name.endsWith(".png");
 			    		
 			    	}  }
@@ -363,7 +370,6 @@ public class main {
 				System.out.println("png folder for \""+fname+"\" does not exist!!!");
 				System.exit(0);
 			}
-			
 			
 			xlt.delete();
 			write = new RandomAccessFile(xlt, "rw");
@@ -395,11 +401,39 @@ public class main {
 			
 			
 			}
-			//gets encoding types 
+
+		
+		////////Important logic for rearranging hashes and encoding bytes based on read order of file filter	
+
+			int[] indexes = new int[internalId.length];
+			int index_;
+
+			for(int i =0; i < internalId.length; ++i){
+				index_=0;
+				int idx = pngs[i].getName().lastIndexOf('.');
+				for(String s : internalId){
+				 if (pngs[i].getName().substring(0,idx).equals(s))
+				 {indexes[i] = index_;
+					break;}
+				index_++;
+			}
+		}
+
+		String[] id_mirror = new String[internalId.length];
+		byte[] enc_mirror = new byte[encTypes.length];
+
+		int g = 0;
+		for(int i :indexes){
+			id_mirror[g] = internalId[i];
+			enc_mirror[g++] = encTypes[i];
+		}
+		internalId = id_mirror;
+		encTypes = enc_mirror;
 			
-			encTypes = getEncs();
-			
-			for(int i = 0; i < texCnt; ++i) {
+
+		
+			for(int i :indexes) {
+
 				
 				
 					offTbl[i] = 0x10;
@@ -415,7 +449,7 @@ public class main {
 				
 				int lim = getLim();
 						
-				img = encTest.getTex(pngs[i], encTypes[i],lim);
+				img = TexEnc.getTex(pngs[i], encTypes[i],lim);
 				
 				
 				
@@ -423,10 +457,7 @@ public class main {
 					offTbl[i] +=sz;
 				
 				texSzTbl[i] = (img.length)+0x20;
-				
-				/*while(texSzTbl[i] % 16 !=0)
-					texSzTbl[i]++;*/
-				
+
 				
 				
 				
@@ -455,14 +486,17 @@ public class main {
 				
 				//texture entry header generation
 			
-				write.writeInt(encTest.lod); //lod
-				
+				write.writeInt(TexEnc.lod); //lod
+			
+			if(encTypes[i]==0x6)
 				write.writeInt(0x0002);
-				write.writeInt(0x05000500 | ((encTypes[i] <<16))); //encoding type byte + unknowns
+			else if(encTypes[i]==0x5)
+				write.writeInt(0x0001);
+				write.writeInt(0x05000500 | ((encTypes[i] <<16)) | ((encTypes[i]==0x5) ? 0x3 : 0x0)); //encoding type byte + unknowns
 			
 
 				write.writeShort(0x00); //2 byte offset
-				write.writeInt(encTest.wh);				//dimensions
+				write.writeInt(TexEnc.wh);				//dimensions
 				
 				
 				while(write.getFilePointer() < pos+0x20) //padding for .glts in the final game
@@ -709,8 +743,11 @@ public class main {
 			
 			
 			
-			encGet.next();
+			String hash = encGet.next();
+			//int idx = hash.indexOf(':');
+			//hash = hash.substring(0,idx);
 			encs[i] = Byte.parseByte(encGet.next());
+			//internalId[i] = hash;
 	
 				
 			}	

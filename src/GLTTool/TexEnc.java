@@ -16,7 +16,7 @@ import java.util.Arrays;
 
 import javax.imageio.ImageIO;
 
-public class encTest {
+public class TexEnc {
 	
 
 
@@ -534,12 +534,7 @@ public static int a888toRGB(int c, boolean alpha) {
 	    	return 3;
 	    
 	    for(int i = 0; i<values.length; ++i) { 
-	    	
-    		/*if(temp1 < closest) {
-    			closest = values[i-1];
-    			ci = i-1;
-    			
-    		}*/
+
     		
 	    	temp = Math.abs(find - values[i]);
 	    		if(temp < closest) {
