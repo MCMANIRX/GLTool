@@ -1,6 +1,6 @@
 # GLTool
 
-For decoding and encoding Super Mario Strikers GLT files.
+For decoding and encoding Super Mario Strikers GLT and Mario Strikers Charged RLT files.
 
 After extracting, use the [filename]_enc.txt to choose how to encode textures for repacking.\
 currently supported encoding/decoding types:
@@ -22,6 +22,6 @@ to export images as .tex0 instead of .png, add the suffix "tex0" after "input.gl
 
 @deeyipey\
 thisispadding@gmail.com\
-2/6/21
+2/6/21 - 11/21/24
 
 
