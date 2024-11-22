@@ -765,11 +765,18 @@ public class main {
 		write.seek(pos);
 		
 		for(int i = 0 ; i < texCnt; ++i) {
+
+			String encodingType = encToS(encTypes[i]);
+			encodingType = encodingType.length() > 4 ? encodingType.substring(0, 4) : encodingType;
+
+			while(encodingType.length()< 4)
+				encodingType+='\0';
 			
 			write.writeInt((int)Long.parseLong(internalId[i],16)); //hash
 			write.writeInt(offTbl[i]); //offset
 			write.writeInt(texSzTbl[i]); //size
-			write.seek(write.getFilePointer()+0x4);
+			write.writeBytes(encodingType); // encoding type
+			//write.seek(write.getFilePointer()+0x4);
 		}
 		
 	}
