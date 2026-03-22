@@ -1,3 +1,5 @@
+### NOTE: Please see [PyGLT](https://github.com/MCMANIRX/pyGLT) for a more streamlined Python GLT editing experience.
+
 # GLTool
 
 For decoding and encoding Super Mario Strikers GLT and Mario Strikers Charged RLT files.
